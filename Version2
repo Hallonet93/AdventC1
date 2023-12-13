@@ -1,0 +1,78 @@
+using System.Text.RegularExpressions;
+using System.IO;
+using System.Reflection.Metadata;
+
+{
+    FindInputTextFile(false);
+}
+static void FindInputTextFile(bool convertNumberWords) // 
+ 
+{
+    
+    string[] lines = File.ReadAllLines("\\Users\\emeli\\Documents\\input.txt"); // Linking in the document
+    List<string> checkedLines = new List<string>(); // Creating a list of the checked lines
+    int totalSum = 0; // Adding a value to totalSum for later use
+    foreach (string line in lines) // Loop to check each item in the list
+    {
+        string checkedLine = line; 
+        if (convertNumberWords) // If true the below will run
+        {
+            checkedLine = ConvertNumberWordsToDigits(line); 
+            Console.WriteLine($"Converted line: {checkedLine}");
+        }
+        checkedLine = FirstLastNumericalEachLine(checkedLine); // Running the function for finding first and last nr
+        checkedLines.Add(checkedLine); // adding to list
+        Console.WriteLine($"Original line: {line}"); 
+        Console.WriteLine($"Modified line: {checkedLine}");
+        Console.WriteLine("*****"); // Making it easier to see when they get printed
+    }
+    totalSum = AddLines(checkedLines); // Calculating the total via function
+    Console.WriteLine($"Total sum is: {totalSum}"); // Writing it out
+}
+static string ConvertNumberWordsToDigits(string line) // Converting from string to Int function
+{
+    Dictionary<string, string> nrMap = new Dictionary<string, string> // Creating Dictionary for the numbers
+{
+    {"zero", "zero0zero"},
+    {"one", "one1one"},
+    {"two", "two2two"},
+    {"three", "three3three"},
+    {"four", "four4four"},
+    {"five", "five5five"},
+    {"six", "six6six"},
+    {"seven", "seven7seven"},
+    {"eight", "eight8eight"},
+    {"nine", "nine9nine"}
+};
+    string modifiedLine = line; // Saving them in a var
+    foreach (var numberWord in nrMap.Keys) // Loop for replacing them
+    {
+        modifiedLine = modifiedLine.Replace(numberWord, nrMap[numberWord]); // Replaces the string number with the nr
+    }
+    return modifiedLine; // Returns the correct value
+}
+static string FirstLastNumericalEachLine(string modifiedLine) // Function for finding the numbers
+{
+    MatchCollection matches = Regex.Matches(modifiedLine, "\\d"); // uses a expression (\d) to find all numerical digits and stores them in matches
+    string result = ""; // to use to save the first and last digit 
+    if (matches.Count > 0) // checks there is a number in the line
+    {
+        char firstDigit = matches[0].Value[0]; // Assigns the first digit 
+        char lastDigit = matches[matches.Count - 1].Value[0]; // Assigns the last one
+        result = $"{firstDigit}{lastDigit}"; // printing result
+        if (matches.Count == 1) // If only 1 digit in the line
+        {
+            Console.WriteLine($"The original line only had one digit to concatenate: {firstDigit}"); // Printing it
+        }
+    }
+    return result; // returns the result
+}
+static int AddLines(List<string> modifiedLines) // adding it to the list function amd calculate 
+{
+    int sum = 0; // assign the value
+    foreach (string line in modifiedLines) // loop to add them toghether
+    {
+        sum += int.Parse(line); // adding it
+    }
+    return sum; // retuns
+}
